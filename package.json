@@ -1,0 +1,20 @@
+{
+	"name": "myrmeke-colony",
+	"version": "0.0.10",
+	"description": "Myrmeke Colony is the base package for all base dynamic datastores",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"private": false,
+	"repository": {},
+	"author": "Syforce Lightningstorm",
+	"license": "ISC",
+	"scripts": {
+		"build": "tsc"
+	},
+	"dependencies": {
+		"rxjs": "^6.5.2"
+	},
+	"devDependencies": {
+		"typescript": "^3.5.3"
+	}
+}

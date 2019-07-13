@@ -2,6 +2,8 @@ export { AbstractDatastore } from './abstract/datastore.abstract';
 export { IDatastore } from './abstract/datastore.interface';
 
 export { Database } from './config/model/database.model';
+export { Connection } from './config/model/connection.model';
+
 export { SchemaConfig } from './config/schema/schema-config.model';
 export { SchemaFieldConfig } from './config/schema/schema-field-config.model';
 

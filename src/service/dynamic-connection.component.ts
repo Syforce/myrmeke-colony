@@ -5,59 +5,34 @@ export class DynamicConnection<T> {
 	private connection: T;
 	private connectionConfig: Connection;
 
+	private static algorithms = {};
+
 	constructor(connectionConfig: Connection) {
 		this.connectionConfig = connectionConfig;
 	}
 
 	public then(resolve: (value) => void, reject?: (error) => void) {
 		const type: ConnectionType = this.connectionConfig.type;
-		let promise: Promise<any>;
+		const algorithm: (c: Connection) => Promise<T> = DynamicConnection.algorithms[type];
 
-		switch (type) {
-			case ConnectionType.MONGO_DB: {
-				promise = this.createMongoConnection();
-				break;
-			}
-			case ConnectionType.INFLUX_DB: {
-				promise = this.createInfluxConnection();
-				break;
-			}
-			case ConnectionType.POSTGRES: {
-				promise = this.createPostgresConnection();
-				break;
-			}
+		if (algorithm) {
+			algorithm(this.connectionConfig).then((value) => {
+				this.connection = value;
+				resolve(value);
+			}, (error) => {
+				reject(error);
+			});
+		} else {
+			console.log('The algorithm for the provided database was not loaded');
 		}
-
-		promise.then((value) => {
-			this.connection = value;
-			resolve(value);
-		}, (error) => {
-			reject(error);
-		});
 	}
 
 	public getConnection(): T {
 		return this.connection;
 	}
 
-	private createMongoConnection(): Promise<any> {
-		// const Mongoose = require('mongoose');
-
-		// const promise: Promise<any> = new Promise((resolve: Function, reject: Function) => {
-		// 	Mongoose.createConnection(`mongodb://${this.connectionConfig.host}/${this.connectionConfig.url}`, {
-		// 		useNewUrlParser: true
-		// 	}).then((connection: T) => {
-		// 		console.log('MongoDB connection succeded');
-		// 		resolve(connection);
-		// 	}, (error) => {
-		// 		console.error('MongoDB connection failed', error);
-		// 		reject(error);
-		// 	});
-		// });
-
-		// return promise;
-
-		return null;
+	public static addAlgorithm(type: ConnectionType, algorithm: (c: Connection) => Promise<any>) {
+		DynamicConnection.algorithms[type] = algorithm;
 	}
 
 	private createInfluxConnection(): Promise<any> {

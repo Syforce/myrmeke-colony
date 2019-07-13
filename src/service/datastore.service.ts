@@ -10,6 +10,10 @@ export class DatastoreService {
 
 	public connectionObservable: Observable<DynamicConnection<any>> = this.connectionSubject.asObservable();
 
+	constructor() {
+		console.log('Dev message: DatastoreService created');
+	}
+
 	public init(databases: Array<Connection>) {
 		databases.forEach((item: Connection) => {
 			const instance: DynamicConnection<any> = new DynamicConnection(item);
@@ -18,7 +22,7 @@ export class DatastoreService {
 				this.connectionMap[item.type] = instance;
 				this.connectionSubject.next(instance);
 			}, (error) => {
-				console.error('Database error detected in DatastoreService');
+				console.error('Database error detected in DatastoreService', error);
 			});
 		});
 	}

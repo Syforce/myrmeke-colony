@@ -1,4 +1,9 @@
 export enum SchemaFieldType {
+	SERIAL,
+	INTEGER,
+	FLOAT,
+	BOOLEAN,
 	STRING,
-	ID
+	FOREIGN_KEY,
+	UUID
 }

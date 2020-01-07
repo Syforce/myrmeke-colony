@@ -12,6 +12,7 @@ export { SchemaFieldConfig } from './config/schema/schema-field-config.model';
 
 // Config Enum
 export { ConnectionType } from './config/enum/connection-type.enum';
+export { LiveConnectionType } from './config/enum/live-connection-type.enum';
 export { SchemaFieldType } from './config/enum/schema-field-type.enum';
 
 // Service

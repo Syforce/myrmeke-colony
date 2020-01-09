@@ -16,4 +16,6 @@ export interface IDatastore<T> {
     update(id: number | T, model: T): Promise<T | Array<T>>;
 
     delete(id: number | T): Promise<T>;
+
+    deleteAll(): Promise<Array<T>>;
 }

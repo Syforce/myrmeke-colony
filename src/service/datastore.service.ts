@@ -12,11 +12,18 @@ export class DatastoreService {
     private readonly datastores = {};
     private readonly connectionMap = {};
 
+    private localMap = {};
+    private mapDatastores = {};
+    private ready: boolean = false;
+    private subscribers: Array<Function> = new Array<Function>();
+
     constructor() {
         console.log('Dev message: RegisterDatastoreService created');
     }
 
     public init(databases: Array<Connection>) {
+        let counter: number = 0;
+
         databases.forEach((item: Connection) => {
             const instance: DynamicConnection<any> = new DynamicConnection(item);
 
@@ -31,6 +38,8 @@ export class DatastoreService {
                         datastore.init(instance);
                     }
                 });
+
+                ++counter == databases.length ? this.onReady() : null;
             }, (error) => {
                 console.error('Database error detected in RegisterDatastoreService', error);
             });
@@ -59,8 +68,6 @@ export class DatastoreService {
         this.prioritizeDependencies();
     }
 
-    private mapDatastores = {};
-
     private mapDatastoreConfigs() {
         const keys: Array<string> = Object.keys(this.datastores);
 
@@ -78,7 +85,13 @@ export class DatastoreService {
         return this.datastores[datastoreType.name];
     }
 
-    private localMap = {};
+    public then(callback: Function): void {
+        if (!this.ready) {
+            this.subscribers.push(callback);
+        } else {
+            callback();
+        }
+    }
 
     private prioritizePeerDependencies(name: string) {
         if (this.localMap[name] === undefined) {
@@ -113,6 +126,13 @@ export class DatastoreService {
 
         keys.forEach((key: string) => {
             this.localMap[key] = this.prioritizePeerDependencies(key);
+        });
+    }
+
+    private onReady(): void {
+        this.ready = true;
+        this.subscribers.forEach((value: Function) => {
+            value();
         });
     }
 }
